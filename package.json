@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon src/index.js"
+    "devStart": "nodemon src/index.js"
+    "start": "node src/index.js"
   },
   "author": "Jose Manuel Cano",
   "license": "ISC",
