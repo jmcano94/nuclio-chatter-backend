@@ -5,7 +5,7 @@ const cors = require('cors');
 app.use(cors())
 const bodyParser = require("body-parser");
 const {configSecurity} = require('./security/jwt');
-const server = app.listen(3001, () => {
+const server = app.listen(process.env.PORT, () => {
 	console.log('server is running on port', server.address().port);
 });
 const socket = require('./socket');
