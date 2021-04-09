@@ -1,5 +1,5 @@
 const {Chat, User} = require('../mongo/index');
-const io = require('../index').io;
+const server = require('../index');
 
 //GET ALL
 exports.index = (req, res) => {
@@ -32,7 +32,7 @@ exports.createOne = (req, res) => {
 				'_id': { $in: newChat.users}}).then( users => {
 				newChat.users = users;
 				users.filter(u => u._id !== req.user.id).forEach(user => {
-					io.to(`user-${user._id}`).emit("new-chat", newChat);
+					server.io.to(`user-${user._id}`).emit("new-chat", newChat);
 				})
 				res.status(201).json(newChat);
 			});

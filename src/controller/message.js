@@ -1,5 +1,5 @@
 const {ChatMessage, Chat} = require('../mongo/index');
-const io = require('../index').io;
+const server = require('../index');
 //GET ALL BY CHAT
 exports.index = (req, res) => {
 	ChatMessage.find({chat: req.params.chatId}).populate('user').then(chats => {
@@ -18,9 +18,9 @@ exports.createOne = async (req, res) => {
 				const message = new ChatMessage({user: req.user.id, chat: req.params.chatId, body: req.body.body});
 				message.save().then(newMessage => {
 					ChatMessage.populate(newMessage, {path: 'user'}, (err, m) => {
-						io.to(`chat-${m.chat}`).emit("new-message", m);
+						server.io.to(`chat-${m.chat}`).emit("new-message", m);
 						chat.users.filter(u => u !== req.user.id).forEach(user => {
-							io.to(`user-${user._id}`).emit("new-chat-message", m);
+							server.io.to(`user-${user._id}`).emit("new-chat-message", m);
 						})
 						res.status(201).json(m);
 					})

@@ -1,21 +1,31 @@
 const express = require("express");
-require("dotenv").config();
-const app = express();
 const cors = require('cors');
-app.use(cors())
 const bodyParser = require("body-parser");
-const {configSecurity} = require('./security/jwt');
-const server = app.listen(process.env.PORT, () => {
-	console.log('server is running on port', server.address().port);
-});
-const socket = require('./socket');
-const io = socket(server);
-exports.io = io;
-const appRouter = require('./router');
+const dotenv = require("dotenv");
+const configureSockets = require("./socket");
+dotenv.config();
+const app = express();
+app.use(cors());
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended: false}))
-configSecurity(app,io);
+app.use(bodyParser.urlencoded({extended: false}));
+
+const server = app.listen(process.env.PORT, () => {
+	console.log('server is running on port', process.env.PORT);
+});
+
+
+exports.io = configureSockets(server);
+
+const {configSecurity, authRouter} = require('./security/jwt');
+const appRouter = require('./router');
+
+configSecurity(app);
+require('./socket');
+
 app.use("/",appRouter);
+app.use("/", authRouter);
+
+
 
 
 
